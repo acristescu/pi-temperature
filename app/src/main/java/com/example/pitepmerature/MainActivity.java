@@ -121,7 +121,6 @@ public class MainActivity extends Activity {
 
 		} catch (IOException e) {
 			Log.e(TAG, "Error during IO", e);
-			// error reading temperature
 		}
 	}
 
@@ -131,6 +130,8 @@ public class MainActivity extends Activity {
 		try {
 			((SensorManager)getSystemService(Context.SENSOR_SERVICE)).unregisterListener(mListener);
 			mSensorDriver.unregisterTemperatureSensor();
+			mSensorDriver.unregisterPressureSensor();
+			mSensorDriver.unregisterHumiditySensor();
 			mSensorDriver.close();
 		} catch (Exception e) {
 			// error closing sensor
