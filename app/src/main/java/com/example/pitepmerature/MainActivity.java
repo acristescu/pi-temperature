@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
 
 	private Bme280SensorDriver mSensorDriver;
 	private SensorEventListener mListener;
+	private ShadowUpdater mShadowUpdater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +41,13 @@ public class MainActivity extends Activity {
 			public void onSensorChanged(SensorEvent sensorEvent) {
 				String type = "";
 				if(sensorEvent.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+					mShadowUpdater.setTemperature(sensorEvent.values[0]);
 					type = "Temp: ";
 				} else if(sensorEvent.sensor.getType() == Sensor.TYPE_PRESSURE) {
 					type = "Pressure: ";
+					mShadowUpdater.setPressure(sensorEvent.values[0]);
 				} else if(sensorEvent.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+					mShadowUpdater.setHumidity(sensorEvent.values[0]);
 					type = "Humidity: ";
 				}
 				Log.d(TAG, type + sensorEvent.values[0]);
@@ -69,6 +73,8 @@ public class MainActivity extends Activity {
 		});
 
 		try {
+			mShadowUpdater = new ShadowUpdater(this);
+
 			I2cDevice device = managerService.openI2cDevice(managerService.getI2cBusList().get(0), ADDRESS);
 			mSensorDriver = new Bme280SensorDriver(device);
 			mSensorDriver.registerTemperatureSensor();
